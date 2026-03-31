@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:plant_simulator/plant_simulator.dart';
 import 'package:test/test.dart';
 
@@ -84,4 +82,100 @@ void main() {
 
     expect(dest.throughput, 164);
   });
+
+  // test('Two sources', () {
+  //   final walek = Part("Lozysko");
+  //   final lozysko = Part("Lozysko");
+  //
+  //   final sourceWalek = Source(
+  //     part: walek,
+  //     interval: Duration(seconds: 50),
+  //   );
+  //   final sourceLozysko = Source(
+  //     part: lozysko,
+  //     interval: Duration(seconds: 40),
+  //   );
+  //   final dest = Destination();
+  //
+  //   final station = Station(
+  //     label: "Łączenie",
+  //     processingTime: Duration(seconds: 10),
+  //   )..pipe([dest]);
+  //
+  //   sourceWalek.pipe([station]);
+  //
+  //   sourceLozysko.pipe([station]);
+  //
+  //   PlantSimulator(
+  //     sources: [sourceWalek, sourceLozysko],
+  //     duration: Duration(days: 1),
+  //   ).start();
+  //
+  //   expect(dest.throughput, 164);
+  // });
+
+  test('Lab 3 - cw 3', () {
+    final walek = Part("Wałek");
+    final lozysko = Part("Łozysko");
+    final walekZLozyskiem = Part(
+      "Wałek z łożyskiem",
+    );
+
+    final dest = Destination();
+
+    final sourceWalek = Source(part: walek);
+
+    final sourceLozysko = Source(part: lozysko);
+
+    final assembly = AssemblyStation(
+      label: "Łączenie",
+      recipy: {walek.name: 1, lozysko.name: 1},
+      exitingPart: walekZLozyskiem,
+      processingTime: Duration(seconds: 10),
+    )..pipe([dest]);
+
+    sourceLozysko.pipe([assembly]);
+
+    final frezowanie = Station(
+      label: "Frezowanie",
+      processingTime: Duration(minutes: 2),
+    )..pipe([assembly]);
+
+    sourceWalek.pipe([frezowanie]);
+
+    PlantSimulator(
+      sources: [sourceWalek, sourceLozysko],
+      duration: Duration(days: 1),
+    ).start();
+
+    expect(dest.throughput, 719);
+  });
+
+  // test('Lab 3 - cw 3', () {
+  //   final walek = Part("Wałek");
+  //   final paleta = Part("Paleta");
+  //   final dest = Destination();
+  //
+  //   final converyor = Conveyor(
+  //     lengthInMeters: 15,
+  //     speedInMetersPerSecond: 2,
+  //   );
+  //
+  //   final sourceWalek = Source(part: walek)
+  //     ..pipe([converyor]);
+  //
+  //   AssemblyStation(
+  //     label: "Pakowanie",
+  //     recipy: {walek.name: 400},
+  //     exitingPart: paleta,
+  //     processingTime: Duration(seconds: 10),
+  //   ).pipe([dest]);
+  //
+  //   PlantSimulator(
+  //     sources: [sourceWalek],
+  //     duration: Duration(days: 1),
+  //   ).start();
+  //
+  //   expect(dest.throughput, 217);
+  // });
 }
